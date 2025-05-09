@@ -1,8 +1,8 @@
 {
   "name": "jira-pr-action",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Github action to add Jira ticket to PR title / add links to PR description.",
-  "author": "On Running",
+  "author": "Elias Júnior",
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
@@ -12,10 +12,6 @@
     "clean": "rimraf ./dist",
     "build": "webpack",
     "test": "jest"
-  },
-  "engines": {
-    "node": "20.11.1",
-    "yarn": ">=1.22.5"
   },
   "dependencies": {
     "typescript": "^4.5.5"

@@ -26,6 +26,7 @@ async function mockContext(options: {
   updateStatus?: number
   contextRepoObject?: null | { owner: string; repo: string }
   hasPullRequestContext?: boolean
+  addDescriptionLink?: boolean
 }): Promise<MockContextSpies> {
   const {
     branch,
@@ -43,6 +44,7 @@ async function mockContext(options: {
       repo: DEFAULT_REQUEST_OPTIONS.repo,
     },
     hasPullRequestContext = true,
+    addDescriptionLink = true,
   } = options
   const setFailedSpy = jest.fn()
   const errorSpy = jest.fn()
@@ -58,6 +60,10 @@ async function mockContext(options: {
       if (input === 'clean-title-regex') return cleanTitleRegex
       if (input === 'preview-link') return preview
       return ''
+    }),
+    getBooleanInput: jest.fn((input: string) => {
+      if (input === 'add-description-link') return addDescriptionLink
+      return false
     }),
     setFailed: setFailedSpy,
     error: errorSpy,
@@ -625,6 +631,36 @@ describe('#pull-request', () => {
 
     it('does not update PR', () => {
       expect(prUpdateSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('when add-description-link is set to false', () => {
+    beforeAll(async () => {
+      jest.resetModules()
+      jest.resetAllMocks()
+      ticket = 'A1C-1234'
+      preview = 'preview-123'
+      const options = {
+        branch: `${ticket}-some-feature`,
+        preview,
+        updateStatus: HTTP_STATUS_SUCCESS,
+        addDescriptionLink: false,
+      }
+      ;({ setFailedSpy, errorSpy, prUpdateSpy } = await mockContext(options))
+      await import('.')
+    })
+
+    it('does not set failed status', () => {
+      expect(setFailedSpy).not.toHaveBeenCalled()
+      expect(errorSpy).not.toHaveBeenCalled()
+    })
+
+    it('updates PR title and description with preview link only', () => {
+      expect(prUpdateSpy).toHaveBeenCalledWith({
+        ...DEFAULT_REQUEST_OPTIONS,
+        title: `${ticket} - title`,
+        body: `**[Preview](${preview})**\n\nbody`,
+      })
     })
   })
 

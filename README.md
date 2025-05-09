@@ -27,6 +27,7 @@ Make sure we create small pull requests tackling only one ticket. If a ticket re
 | `clean-title-regex`       |    ❌    | Regex used to delete text from PR title                                                       |
 | `clean-title-regex-flags` |    ❌    | Flags to add to clean-title-regex                                                             |
 | `preview-link`            |    ❌    | Preview link to add to PR description (i.e. `https://preview.example.com`)                    |
+| `add-description-link`    |    ❌    | Flags to add the description link or not. Default `true`.                                     |
 
 ## Usage
 
@@ -50,4 +51,5 @@ jobs:
           ticket-regex: ^A1C-\\d+
           clean-title-regex: ^\\s*A1\\s+c\\s+\\d+\\s*
           preview-link: https://preview-${{ github.event.pull_request.number }}.example.com"
+          add-description-link: false
 ```

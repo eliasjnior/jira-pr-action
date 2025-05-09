@@ -10,6 +10,7 @@ const INPUT_EXCEPTION_REGEX_FLAGS = 'exception-regex-flags'
 const INPUT_CLEAN_TITLE_REGEX = 'clean-title-regex'
 const INPUT_CLEAN_TITLE_REGEX_FLAGS = 'clean-title-regex-flags'
 const INPUT_PREVIEW_LINK = 'preview-link'
+const INPUT_ADD_DESCRIPTION_LINK = 'add-description-link'
 
 const PREVIEW_LINK_TEXT = 'Preview'
 const JIRA_LINK_TEXT = 'Jira ticket'
@@ -31,6 +32,7 @@ async function run(): Promise<void> {
     const cleanTitleRegexInput = core.getInput(INPUT_CLEAN_TITLE_REGEX)
     const cleanTitleRegexFlags = core.getInput(INPUT_CLEAN_TITLE_REGEX_FLAGS)
     const previewLink = core.getInput(INPUT_PREVIEW_LINK)
+    const addDescriptionLink = core.getBooleanInput(INPUT_ADD_DESCRIPTION_LINK, { required: false })
 
     const requiredInputs = {
       [INPUT_JIRA_ACCOUNT]: jiraAccount,
@@ -71,7 +73,10 @@ async function run(): Promise<void> {
 
     if (ticketInBranch) {
       const jiraLink = `https://${jiraAccount}.atlassian.net/browse/${ticketInBranch}`
-      ticketLine = `**[${JIRA_LINK_TEXT}](${jiraLink})**\n`
+
+      if (addDescriptionLink) {
+        ticketLine = `**[${JIRA_LINK_TEXT}](${jiraLink})**\n`
+      }
 
       if (!ticketRegex.test(prTitle)) request.title = `${ticketInBranch} - ${prTitle}`
     } else {
